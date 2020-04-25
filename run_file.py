@@ -19,5 +19,3 @@ if __name__ == "__main__":
     success_rate = metrics.adjusted_rand_score(data.Tissue.values, labels)
     print(success_rate)
     print(estim.n_clusters)
-
-

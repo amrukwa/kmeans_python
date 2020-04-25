@@ -53,12 +53,12 @@ class PCA:
         return eigenvalue
 
     def _choose_dims(self):
-        sum = np.sum(self.evals)
+        sum_evals = np.sum(self.evals)
         dim_number = 0
         percentage = 0
         for i in range(self.feature_nr):
             dim_number += 1
-            percentage += self.evals[i]/sum
+            percentage += self.evals[i]/sum_evals
             if percentage >= 0.8:
                 break
         self.reduced_dims = dim_number
@@ -66,6 +66,3 @@ class PCA:
     @staticmethod
     def dot_product(z, y):
         return z.dot(y)
-
-
-
