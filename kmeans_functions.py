@@ -1,33 +1,15 @@
 import numpy as np
 import scipy.spatial.distance as ssdist
+import initialization as init
 
 
 def initialization(n_clusters, initialize, x):
     # this method initializes the first set of labels
-    datasize = x.shape[0]
     if initialize == 'random':
-        np.random.seed(45)
-        indices = np.random.choice(datasize, n_clusters, replace=False)
-        centroids = x[indices]
+        centroids = init.random_init(x, n_clusters)
     elif initialize == 'k-means++':
-        first_cent = np.random.choice(datasize, 1)
-        centroids = x[first_cent]
-        k = 1
-        while k < n_clusters:
-            new_centre = _do_for_kpp(centroids, x)
-            centroids = np.append(centroids, new_centre, axis=0)
-            k += 1
+        centroids = init.kpp_init(x, n_clusters)
     return centroids
-
-
-def _do_for_kpp(centroids, x):
-    datasize = x.shape[0]
-    dist = fix_the_distance(x, centroids, 'correlation')
-    p_dist = np.amin(dist, axis=1)
-    all_dist = np.sum(p_dist)
-    probability = [(p_dist[i]) / all_dist for i in range(datasize)]
-    new_centre = x[np.random.choice(datasize, 1, p=probability)]
-    return new_centre
 
 
 def labeling(centroids, x):
@@ -41,7 +23,7 @@ def compute_centroids(n_clusters, centroids, labels, n_iter, max_iter, x):
     while n_iter < max_iter:
         if n_iter > 0:
             prev_centroids = centroids
-        _centroid_by_means(n_clusters, centroids, labels, x)
+        centroids = _centroid_by_means(n_clusters, centroids, labels, x)
         labels = labeling(centroids, x)
         if n_iter > 5 and np.all(centroids == prev_centroids):
             break
@@ -52,6 +34,7 @@ def _centroid_by_means(n_clusters, centroids, labels, x):
     # this method takes already created labels to compute next centroids
     for k in range(n_clusters):
         centroids[k, :] = np.mean(x[labels == k, :], axis=0)
+    return centroids
 
 
 def inertia(centroids, x):
