@@ -23,7 +23,7 @@ def compute_centroids(n_clusters, centroids, labels, n_iter, max_iter, x):
     while n_iter < max_iter:
         if n_iter > 0:
             prev_centroids = centroids
-        _centroid_by_means(n_clusters, centroids, labels, x)
+        centroids = _centroid_by_means(n_clusters, centroids, labels, x)
         labels = labeling(centroids, x)
         if n_iter > 5 and np.all(centroids == prev_centroids):
             break
@@ -34,6 +34,7 @@ def _centroid_by_means(n_clusters, centroids, labels, x):
     # this method takes already created labels to compute next centroids
     for k in range(n_clusters):
         centroids[k, :] = np.mean(x[labels == k, :], axis=0)
+    return centroids
 
 
 def inertia(centroids, x):
