@@ -1,19 +1,17 @@
 import kmeans as km
-import scipy.spatial.distance as ssdist
 import numpy as np
+import initialization as init
 
 
 def _dunn_index(x, estimator):
     datasize = x.shape[0]
-    intercluster_distance = ssdist.cdist(estimator.centroids, estimator.centroids, metric='correlation')
-    intercluster_distance[np.isnan(intercluster_distance)] = 0
+    intercluster_distance = init.fix_the_distance(estimator.centroids, estimator.centroids, 'correlation')
     min_ctc = intercluster_distance[1, 0]
     for i in range(estimator.n_clusters):
         for j in range(estimator.n_clusters):
             if min_ctc > intercluster_distance[i, j] > 0:
                 min_ctc = intercluster_distance[i, j]
-    distance_ctp = ssdist.cdist(x, estimator.centroids, metric='correlation')
-    distance_ctp[np.isnan(distance_ctp)] = 0
+    distance_ctp = init.fix_the_distance(x, estimator.centroids, 'correlation')
     intracluster_distance = [distance_ctp[estimator.labels_[_]] for _ in range(datasize)]
     max_intradist = np.max(intracluster_distance)
     return min_ctc / max_intradist

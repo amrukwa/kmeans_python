@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.linalg import orth
-import pandas as pd
 np.seterr(divide='ignore', invalid='ignore')
 
 

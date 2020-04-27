@@ -1,5 +1,5 @@
 import numpy as np
-import kmeans_functions as kmf
+import scipy.spatial.distance as ssdist
 
 
 def random_init(data, n_clusters):
@@ -23,9 +23,20 @@ def kpp_init(data, n_clusters):
 
 def _do_for_kpp(centroids, x):
     datasize = x.shape[0]
-    dist = kmf.fix_the_distance(x, centroids, 'correlation')
+    dist = fix_the_distance(x, centroids, 'correlation')
     p_dist = np.amin(dist, axis=1)
+    p_dist = p_dist**2
     all_dist = np.sum(p_dist)
     probability = [(p_dist[i]) / all_dist for i in range(datasize)]
     new_centre = x[np.random.choice(datasize, 1, p=probability)]
     return new_centre
+
+
+def fix_the_distance(x, centroids, dist_metric):
+    distance = ssdist.cdist(x, centroids, metric=dist_metric)  # here is sth to change
+    distance[np.isnan(distance)] = 0
+    for i in range(x.shape[0]):
+        for j in range(centroids.shape[0]):
+            if (x[i] == centroids[j]).all():
+                distance[i, j] = 0
+    return distance
