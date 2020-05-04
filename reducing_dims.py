@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.linalg import orth
-np.seterr(divide='ignore', invalid='ignore')
 
 
 class PCA:

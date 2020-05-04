@@ -1,23 +1,23 @@
 import kmeans as km
 import numpy as np
-import initialization as init
+import kmeans_functions as kmf
 
 
 def _dunn_index(x, estimator):
     datasize = x.shape[0]
-    intercluster_distance = init.fix_the_distance(estimator.centroids, estimator.centroids, 'correlation')
+    intercluster_distance = kmf.compute_distance(estimator.centroids, estimator.centroids, 'correlation')
     min_ctc = intercluster_distance[1, 0]
     for i in range(estimator.n_clusters):
         for j in range(estimator.n_clusters):
             if min_ctc > intercluster_distance[i, j] > 0:
                 min_ctc = intercluster_distance[i, j]
-    distance_ctp = init.fix_the_distance(x, estimator.centroids, 'correlation')
-    intracluster_distance = [distance_ctp[estimator.labels_[_]] for _ in range(datasize)]
+    distance_ctp = kmf.compute_distance(x, estimator.centroids, 'correlation')
+    intracluster_distance = [distance_ctp[estimator.labels_[i]] for i in range(datasize)]
     max_intradist = np.max(intracluster_distance)
     return min_ctc / max_intradist
 
 
-def choose_the_best(x, mincluster=2, maxcluster=6):
+def choose_the_best(x, mincluster=2, maxcluster=10):
     the_best = km.KMeans(mincluster)
     estim = the_best.fit(x)
     best_index = _dunn_index(x, estim)
