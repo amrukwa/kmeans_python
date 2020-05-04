@@ -10,16 +10,16 @@ def test_initializes():
     assert mdl is not None
 
 
-def test_fails_for_repeating_centroids():
-    X, y = sd.make_blobs()
-    for i in range(2, 11):
-        centroids = kmf.initialization(i, 'k-means++', X)
-        essence = np.unique(centroids, axis=0)
-        assert essence.shape[0] == centroids.shape[0]
-
-
-def test_fails_for_nonzero_distance():
+@pytest.mark.parametrize("test_input,expected", [(i, 0) for i in range(100)])
+def test_fails_for_nonzero_distance(test_input, expected):
     X, y = sd.make_blobs()
     distance = kmf.compute_distance(X, X, 'correlation')
-    for i in range(X.shape[0]):
-        assert distance[i, i] == 0
+    assert distance[test_input, test_input] == expected
+
+
+@pytest.mark.parametrize("test_input,expected", [(i, i) for i in range(2, 11)])
+def test_fails_for_repeating_centroids(test_input, expected):
+    X, y = sd.make_blobs()
+    centroids = kmf.initialization(test_input, 'k-means++', X)
+    essence = np.unique(centroids, axis=0)
+    assert essence.shape[0] == expected
