@@ -15,12 +15,10 @@ def test_fails_for_repeating_centroids():
     data = pd.read_csv('/Users/amruk/PycharmProjects/kmeans/setA.txt', delimiter=' ')
     file.close()
     data1 = data[["Gsto1", "Gstm1", "Cd9", "Prdx1", "Coro1a", "Rac2", "Perp"]].values
-    i = 2
-    while i <= 10:
+    for i in range(2, 11):
         centroids = kmf.initialization(i, 'k-means++', data1)
         essence = np.unique(centroids, axis=0)
         assert essence.shape[0] == centroids.shape[0]
-        i +=1
 
 
 def test_fails_for_nonzero_distance():
