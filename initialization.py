@@ -31,12 +31,3 @@ def next_for_kpp(centroids, x):
     new_centre = x[np.random.choice(datasize, 1, p=probability)]
     return new_centre
 
-
-def compute_distance(x, centroids, dist_metric):
-    distance = ssdist.cdist(x, centroids, metric=dist_metric)  # here is sth to change
-    distance[np.isnan(distance)] = 0
-    for i in range(x.shape[0]):
-        for j in range(centroids.shape[0]):
-            if (x[i] == centroids[j]).all():
-                distance[i, j] = 0
-    return distance
