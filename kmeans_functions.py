@@ -1,12 +1,13 @@
 import numpy as np
 import initialization as init
 import scipy.spatial.distance as ssdist
+import numbers
 
 
-def initialization(n_clusters, initialize, x):
+def initialization(n_clusters, initialize, x, random_state):
     # this method initializes the first set of labels
     if initialize == 'random':
-        centroids = init.random_init(x, n_clusters)
+        centroids = init.random_init(x, n_clusters, random_state)
     elif initialize == 'k-means++':
         centroids = init.kpp_init(x, n_clusters)
     return centroids
@@ -52,3 +53,14 @@ def compute_distance(x, centroids, dist_metric):
             if (x[i] == centroids[j]).all():
                 distance[i, j] = 0
     return distance
+
+
+def check_random_state(seed):
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    if isinstance(seed, numbers.Integral):
+        return np.random.RandomState(seed)
+    if isinstance(seed, np.random.RandomState):
+        return seed
+    raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
+                     ' instance' % seed)

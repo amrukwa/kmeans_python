@@ -1,10 +1,9 @@
 import numpy as np
-import scipy.spatial.distance as ssdist
 import kmeans_functions as kmf
 
 
-def random_init(data, n_clusters):
-    indices = np.random.choice(data.shape[0], n_clusters, replace=False)
+def random_init(data, n_clusters, random_state):
+    indices = np.random.choice(data.shape[0], n_clusters, replace=False, seed=random_state)
     centroids = data[indices]
     return centroids
 
@@ -30,4 +29,3 @@ def next_for_kpp(centroids, x):
     probability = [(p_dist[i]) / all_dist for i in range(datasize)]
     new_centre = x[np.random.choice(datasize, 1, p=probability)]
     return new_centre
-
