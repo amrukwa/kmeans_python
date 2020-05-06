@@ -5,3 +5,4 @@ import sklearn.datasets as sd
 if __name__ == "__main__":
     X, y = sd.make_blobs()
     estim = cn.choose_the_best(X)
+    print(estim.n_clusters)

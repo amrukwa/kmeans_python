@@ -20,20 +20,13 @@ def _dunn_index(x, estimator):
 def choose_the_best(x, mincluster=2, maxcluster=10):
     the_best = km.KMeans(mincluster)
     estim = the_best.fit(x)
-    best_index = _dunn_index(x, estim)
-    estimators = [km.KMeans(mincluster)]
-    estimators[0] = estimators[0].fit(x)
-    best_index = 0
-    best_dunn = _dunn_index(x, estimators[0])
-    k = mincluster + 1
-    ind = 1
-    while k <= maxcluster:
-        estimators.append(km.KMeans(k))
-        estimators[ind] = estimators[ind].fit(x)
-        cur_dunn = _dunn_index(x, estimators[ind])
+    best_dunn = _dunn_index(x, estim)
+    for k in range(mincluster+1, maxcluster):
+        estim_next = km.KMeans(k)
+        print(estim_next.n_clusters)
+        estim_next = estim_next.fit(x)
+        cur_dunn = _dunn_index(x, estim_next)
         if cur_dunn > best_dunn:
             best_dunn = cur_dunn
-            best_index = ind
-        k += 1
-        ind += 1
-    return estimators[best_index]
+            estim = estim_next
+    return estim
