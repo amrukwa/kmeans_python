@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import orth
+import kmeans_functions as kmf
 
 
 class PCA:
@@ -11,8 +12,8 @@ class PCA:
         self.datasize = x.shape[0]
 
     def pca(self):
-        self._subtract_mean()
-        cov_moved = np.cov(np.transpose(self.x))
+        moved = kmf.subtract_mean(self.x)
+        cov_moved = np.cov(np.transpose(moved))
         self.evecs = orth(cov_moved)
         for i in range(self.feature_nr):
             self._power_method(cov_moved, i)
@@ -20,21 +21,12 @@ class PCA:
         importance = self.evals.argsort()[::-1]
         self.evals = self.evals[importance]
         self.evecs = self.evecs[importance]
-        self.x = self.dot_product(self.x, self.evecs)
+        moved = self.dot_product(moved, self.evecs)
         if self.reduce_to2 == "NO":
             self._choose_dims()
-        self.x = self.x[:, :self.reduced_dims]
-        # for_visualization = pd.DataFrame(self.x, columns=['x', 'y'])
-        return self.x  # reduced dim data
-
-    def _subtract_mean(self):
-        means_of_cols = np.mean(self.x, axis=0)
-        self.x = np.array([[self._moving(i, j, means_of_cols) for i in range(self.feature_nr)] for j in range(self.datasize)])
-        self.x.reshape((self.datasize, self.feature_nr))
-
-    def _moving(self, dim1, dim2, means):
-        value = self.x[dim2, dim1] - means[dim1]
-        return value
+        moved = moved[:, :self.reduced_dims]
+        # for_visualization = pd.DataFrame(moved, columns=['x', 'y'])
+        return moved  # reduced dim data
 
     def _power_method(self, matrix, i, tol=0.0001):
         iters = 0

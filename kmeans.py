@@ -1,9 +1,16 @@
 import sklearn.base as base
 import kmeans_functions as kme
+import sklearn.utils as utils
 
 
 class KMeans(base.ClusterMixin, base.BaseEstimator):
-    def __init__(self, n_clusters, initialize='k-means++', max_iter=1000, metric='correlation', random_state=None):
+
+    def __init__(self,
+                 n_clusters,
+                 initialize='k-means++',
+                 max_iter=1000,
+                 metric='correlation',
+                 random_state=None):
         self.n_clusters = n_clusters
         self.initialize = initialize
         self.max_iter = max_iter
@@ -12,7 +19,7 @@ class KMeans(base.ClusterMixin, base.BaseEstimator):
 
     def fit(self, x):
         self.n_iter_ = 0
-        self.random_state = kme.check_random_state(self.random_state)
+        self.random_state = utils.check_random_state(self.random_state)
         self.centroids = kme.initialization(self.n_clusters, self.initialize, x, self.random_state, self.metric)
         self.labels_ = kme.labeling(self.centroids, x, self.metric)
         kme.compute_centroids(self.n_clusters, self.centroids,
