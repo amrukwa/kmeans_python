@@ -69,4 +69,3 @@ def normalize(x):
         for j in range(x.shape[1]):
             normalized[i, j] = subtracted_mean[i, j]/std_dev[i]
     return normalized
-
