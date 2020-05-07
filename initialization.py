@@ -1,5 +1,5 @@
 import numpy as np
-import kmeans_functions as kmf
+import scipy.spatial.distance as ssdist
 
 
 def random_init(data, n_clusters, random_state):
@@ -22,7 +22,7 @@ def kpp_init(data, n_clusters, metric):
 
 def next_for_kpp(centroids, x, metric):
     datasize = x.shape[0]
-    dist = kmf.compute_distance(x, centroids, metric)
+    dist = ssdist.cdist(x, centroids, metric)
     p_dist = dist.min(axis=1)
     p_dist = p_dist**2
     all_dist = np.sum(p_dist)

@@ -13,10 +13,11 @@ def initialization(n_clusters, initialize, x, random_state, metric):
     return centroids
 
 
-def labeling(centroids, x, metric):
+def labeling(centroids, x, metric):  # here sth doesn't work
     # this method creates labels for every position in training data based on current centroids
-    distance = compute_distance(x, centroids, metric)
-    labels = np.argmin(distance, axis=1)
+    distance = ssdist.cdist(x, centroids, metric)
+    labels = distance.argmin(axis=1)
+    unique_elements, counts_elements = np.unique(labels, return_counts=True)
     return labels
 
 
@@ -40,19 +41,9 @@ def _centroid_by_means(n_clusters, centroids, labels, x):
 
 def inertia(centroids, x, metric):
     datasize = x.shape[0]
-    distance = compute_distance(x, centroids, metric)
+    distance = ssdist.cdist(x, centroids, metric)
     inertia = np.sum([(distance[i]) ** 2 for i in range(datasize)])
     return inertia
-
-
-def compute_distance(x, centroids, dist_metric):
-    distance = ssdist.cdist(x, centroids, metric=dist_metric)  # here is sth to change
-    # distance[np.isnan(distance)] = 0
-    # for i in range(x.shape[0]):
-    #     for j in range(centroids.shape[0]):
-    #         if (x[i] == centroids[j]).all():
-    #             distance[i, j] = 0
-    return distance
 
 
 def check_random_state(seed):
@@ -64,3 +55,7 @@ def check_random_state(seed):
         return seed
     raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
                      ' instance' % seed)
+
+
+def normalize(x):
+    pass
