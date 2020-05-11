@@ -35,7 +35,7 @@ class KMeans(base.ClusterMixin, base.BaseEstimator):
                 self.n_iter_ = n_iter
                 self.inertia = inertia
                 self.centroids = centroidsi
-                self.labels = labelsi
+                self.labels_ = labelsi
         return self
 
     def predict(self, matrix):
