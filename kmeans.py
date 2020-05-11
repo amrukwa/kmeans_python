@@ -37,3 +37,7 @@ class KMeans(base.ClusterMixin, base.BaseEstimator):
                 self.centroids = centroidsi
                 self.labels = labelsi
         return self
+
+    def predict(self, matrix):
+        labels = kme.labeling(self.centroids, matrix, self.metric)
+        return labels

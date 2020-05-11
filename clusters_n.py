@@ -1,8 +1,28 @@
 import kmeans as km
 import numpy as np
 import scipy.spatial.distance as ssdist
-import sklearn.preprocessing as preprocessing
-import kmeans_functions as kmf
+
+
+class Dunn(km.KMeans):
+    def __init__(self,
+                 estimator,
+                 mincluster=2,
+                 maxcluster=10):
+        self.estimator = estimator
+        self.mincluster = mincluster
+        self.maxcluster = maxcluster
+
+    def fit(self, x):
+        self.dunn = _dunn_index(x, self.estimator, self.estimator.metric)
+        for k in range(self.mincluster + 1, self.maxcluster):
+            estim_next = km.KMeans(k,
+                                   metric=self.estimator.metric)
+            estim_next = estim_next.fit(x)
+            cur_dunn = _dunn_index(x, estim_next, self.estimator.metric)
+            if cur_dunn > self.dunn:
+                self.dunn = cur_dunn
+                self.estimator = estim_next
+        return self.estimator
 
 
 def _dunn_index(x, estimator, metric):
@@ -17,25 +37,3 @@ def _dunn_index(x, estimator, metric):
     intracluster_distance = [distance_ctp[estimator.labels_[i]] for i in range(datasize)]
     max_intradist = np.max(intracluster_distance)
     return min_ctc / max_intradist
-
-
-def choose_the_best(x, mincluster=2, maxcluster=10, metric='correlation'):
-    if metric == 'correlation':
-        transformer = preprocessing.StandardScaler()
-        normalized_data = transformer.fit_transform(x)
-        # normalized_data = kmf.normalize(x)
-    else:
-        normalized_data = x
-    the_best = km.KMeans(mincluster,
-                         metric=metric)
-    estim = the_best.fit(normalized_data)
-    best_dunn = _dunn_index(normalized_data, estim, metric)
-    for k in range(mincluster+1, maxcluster):
-        estim_next = km.KMeans(k,
-                               metric=metric)
-        estim_next = estim_next.fit(normalized_data)
-        cur_dunn = _dunn_index(normalized_data, estim_next, metric)
-        if cur_dunn > best_dunn:
-            best_dunn = cur_dunn
-            estim = estim_next
-    return estim
