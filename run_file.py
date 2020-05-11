@@ -22,4 +22,3 @@ if __name__ == "__main__":
     print(est.n_clusters)
     score = metrics.adjusted_rand_score(labels_true, est.labels_)
     print(score)
-
