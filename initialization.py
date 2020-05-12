@@ -3,7 +3,8 @@ import scipy.spatial.distance as ssdist
 
 
 def random_init(data, n_clusters, random_state):
-    indices = np.random.choice(data.shape[0], n_clusters, replace=False, seed=random_state)
+    np.random.seed(random_state)
+    indices = np.random.choice(data.shape[0], n_clusters, replace=False)
     centroids = data[indices]
     return centroids
 
