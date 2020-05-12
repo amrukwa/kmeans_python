@@ -7,7 +7,7 @@ class KFold:
         self.n_splits = n_splits
 
     def validate(self, data, labels_true, estimator):
-        score = 0
+        score1 = 0
         indices = [i for i in range(data.shape[0])]
         np.random.shuffle(indices)
         split = np.array_split(indices, self.n_splits)
@@ -17,11 +17,5 @@ class KFold:
             train = np.delete(data, array, axis=0)
             estimator.fit(train)
             labels_pred = estimator.predict(test)
-            score += metrics.adjusted_rand_score(test_true, labels_pred)
-        return score / self.n_splits
-
-
-def calculate_score(data, labels_true):
-    labels_pred = data
-    score = metrics.adjusted_rand_score(labels_true, labels_pred)
-    return score
+            score1 += metrics.adjusted_rand_score(test_true, labels_pred)
+        return score1 / self.n_splits
