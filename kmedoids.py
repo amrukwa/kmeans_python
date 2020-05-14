@@ -11,8 +11,8 @@ class KMedoids(km.KMeans):
         self.n_iter_ = 0
         self.random_state = utils.check_random_state(self.random_state)
         self.centroids_indices_ = initialization(self.n_clusters, self.initialize, x, self.random_state, self.metric)
-        self.labels_ = labeling(self.centroids_indices_, x, self.distance)
-
+        self.labels_ = labeling(self.centroids_indices_, self.distance)
+        compute_indices(self.centroids_indices_, self.labels_, self.n_iter_, self.max_iter, x, self.distance)
         self.centroids = x[self.centroids_indices_]
         return self
 
@@ -58,7 +58,22 @@ def kpp_init(data, n_clusters, metric):
     return centroids_indices
 
 
-def labeling(centroids_indices, x, distance):
+def labeling(centroids_indices, distance):
     dist_local = distance[:, centroids_indices]
     labels = dist_local.argmin(axis=1)
     return labels
+
+
+def indices_by_distance(x, distance, centroids_indices):  # refactor
+    return centroids_indices
+
+
+def compute_indices(centroids_indices, labels, n_iter, max_iter, x, distance):
+    while n_iter < max_iter:
+        if n_iter > 0:
+            prev_indices = centroids_indices
+        centroids_indices = indices_by_distance(x, distance, centroids_indices)
+        labels = labeling(centroids_indices, distance)
+        if n_iter > 0 and np.all(centroids_indices == prev_indices):
+            break
+        n_iter += 1
