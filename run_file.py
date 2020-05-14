@@ -13,17 +13,11 @@ if __name__ == "__main__":
     iris = pd.read_csv("iris.data", header=None)
     labels_true = iris[4]
     data = iris.drop(columns=4).values
-    shape = data.shape
-    essence, counts = np.unique(data, axis=0, return_counts=True)
-    # X, y = sd.make_blobs()
     transformer = pre.StandardScaler()
-    data = transformer.fit_transform(data)
-    # est = km.KMeans(2)
-    # est = est.fit(data)
-    # dunn = cn.Dunn(est)
-    # est = dunn.fit(data)
-    # print(est.n_clusters)
-    # val = cv.KFold()
-    # score1 = val.validate(data, labels_true, est)
-    # print(score1)
-    est = kmd.KMedoids
+    data1 = transformer.fit_transform(data)
+    est = kmd.KMedoids(2)
+    est = est.fit(data)
+    val1 = cv.KFold()
+    score1 = val1.validate(data, labels_true, est)
+    print(score1)
+

@@ -51,7 +51,7 @@ def random_init(data, n_clusters, random_state):
 def next_for_kpp(centroids_indices, x, metric):
     datasize = x.shape[0]
     dist = ssdist.cdist(x, x[centroids_indices], metric)  # change for better performance
-    p_dist = dist.min(axis=1, initial=0)
+    p_dist = dist.min(axis=1)
     p_dist = p_dist**2
     all_dist = np.sum(p_dist)
     probability = [(p_dist[i]) / all_dist for i in range(datasize)]
