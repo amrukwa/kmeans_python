@@ -12,7 +12,19 @@ class KMedoids(km.KMeans):
         self.random_state = utils.check_random_state(self.random_state)
         self.centroids_indices_ = initialization(self.n_clusters, self.initialize, x, self.random_state, self.metric)
         self.labels_ = labeling(self.centroids_indices_, self.distance)
-        compute_indices(self.centroids_indices_, self.labels_, self.n_iter_, self.max_iter, x, self.distance)
+        compute_indices(self.centroids_indices_, self.labels_, self.n_iter_, self.max_iter, self.distance)
+        self.inertia = kmf.inertia(x[self.centroids_indices_], x, self.metric)  # refactor
+        for i in range(9):
+            n_iter = 0
+            centroids_ind = initialization(self.n_clusters, self.initialize, x, self.random_state, self.metric)
+            labelsi = labeling(self.centroids_indices_, self.distance)
+            compute_indices(centroids_ind, labelsi, n_iter, self.max_iter, self.distance)
+            inertia = kmf.inertia(x[centroids_ind], x, self.metric)  # refactor
+            if inertia < self.inertia:
+                self.n_iter_ = n_iter
+                self.inertia = inertia
+                self.centroids_indices_ = centroids_ind
+                self.labels_ = labelsi
         self.centroids = x[self.centroids_indices_]
         return self
 
@@ -39,7 +51,7 @@ def random_init(data, n_clusters, random_state):
 def next_for_kpp(centroids_indices, x, metric):
     datasize = x.shape[0]
     dist = ssdist.cdist(x, x[centroids_indices], metric)  # change for better performance
-    p_dist = dist.min(axis=1)
+    p_dist = dist.min(axis=1, initial=0)
     p_dist = p_dist**2
     all_dist = np.sum(p_dist)
     probability = [(p_dist[i]) / all_dist for i in range(datasize)]
@@ -64,15 +76,19 @@ def labeling(centroids_indices, distance):
     return labels
 
 
-def indices_by_distance(x, distance, centroids_indices):  # refactor
+def indices_by_distance(distance, centroids_indices, labels):
+    for i in range(len(centroids_indices)):
+        sum_dist = np.sum(distance[labels == i], axis=1)
+        new_index = sum_dist.argmin()
+        centroids_indices[i] = new_index
     return centroids_indices
 
 
-def compute_indices(centroids_indices, labels, n_iter, max_iter, x, distance):
+def compute_indices(centroids_indices, labels, n_iter, max_iter, distance):
     while n_iter < max_iter:
         if n_iter > 0:
             prev_indices = centroids_indices
-        centroids_indices = indices_by_distance(x, distance, centroids_indices)
+        centroids_indices = indices_by_distance(distance, centroids_indices, labels)
         labels = labeling(centroids_indices, distance)
         if n_iter > 0 and np.all(centroids_indices == prev_indices):
             break
