@@ -77,7 +77,7 @@ def labeling(centroids_indices, distance):
 
 
 def indices_by_distance(distance, centroids_indices, labels):
-    for i in range(len(centroids_indices)):
+    for i in range(centroids_indices.shape[0]):
         sum_dist = np.sum(distance[labels == i], axis=1)
         new_index = sum_dist.argmin()
         centroids_indices[i] = new_index
