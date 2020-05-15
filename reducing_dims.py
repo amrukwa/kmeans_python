@@ -14,7 +14,7 @@ class PCA:
     def pca(self):
         moved = kmf.subtract_mean(self.x)
         cov_moved = np.cov(np.transpose(moved))
-        self.evecs = orth(cov_moved)
+        self.evecs = np.eye(cov_moved.shape[0])
         for i in range(self.feature_nr):
             self._power_method(cov_moved, i)
         self.evals = np.array([self._rayleigh_quotient(cov_moved, i) for i in range(self.feature_nr)])
